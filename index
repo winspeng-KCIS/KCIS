@@ -1,0 +1,29 @@
+<html>
+<script>
+  // 1. 貼上您的 Apps Script Web App API 網址
+  const API_URL = "https://script.google.com/macros/s/AKfycbytZT-u2o29oMrov-PJ46YPENGo6ncjHixpV5CCtrzgw9dLV5x-pIyoH1diBU1aezxknw/exec";
+
+  // 2. 自動向後端 API 獲取最新資料並渲染畫面
+  async function fetchSchoolData() {
+    try {
+      const response = await fetch(API_URL);
+      const resData = await response.json();
+
+      if (resData.items && resData.items.length > 0) {
+        appData = resData.items; // 將 API 抓到的行事曆與郵件資料帶入
+        saveData();
+        renderCards(); // 繪製儀表板卡片
+        
+        // 更新頂部顯示的最後同步時間
+        const syncTag = document.querySelector('.notice-bar span:last-child');
+        if (syncTag) syncTag.innerText = `最後同步時間：${resData.lastUpdate}`;
+      }
+    } catch (error) {
+      console.error("讀取 API 資料失敗，切換為本地快取：", error);
+    }
+  }
+
+  // 頁面開啟時自動執行
+  window.addEventListener('DOMContentLoaded', fetchSchoolData);
+</script>
+</html>
